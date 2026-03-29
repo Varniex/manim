@@ -5,7 +5,7 @@ from manimlib.utils.color import color_to_hex
 from manimlib.mobject.svg.tex_mobject import Tex
 from manimlib.mobject.geometry import RoundedRectangle
 from manimlib.utils.typst_tex_symbol_count import ACCENT_COMMANDS, OPERATORS
-from manimlib.utils.typst_tex_symbol_count import TYPST_TEX_SYMBOL_COUNT, DELIMITER_COMMANDS
+from manimlib.utils.typst_tex_symbol_count import TEX_TO_SYMBOL_COUNT, DELIMITER_COMMANDS
 from manimlib.utils.tex_file_writing import typst_latex2svg
 from manimlib.logger import log
 
@@ -82,7 +82,7 @@ class TypstTex(Tex):
         for match in re.finditer(pattern, self.string, re.VERBOSE):
             text = match.group()
             start = match.start()
-            num = TYPST_TEX_SYMBOL_COUNT.get(text, 1)
+            num = TEX_TO_SYMBOL_COUNT.get(text, 1)
 
             if match.group("txt"):
                 num = len(text.replace('"', "").replace(" ", ""))
@@ -105,7 +105,7 @@ class TypstTex(Tex):
 
             elif text == ",":
                 if group_stack and group_stack[-1] in ("frac", "root"):
-                    counts[start] += TYPST_TEX_SYMBOL_COUNT.get(group_stack[-1], 0)
+                    counts[start] += TEX_TO_SYMBOL_COUNT.get(group_stack[-1], 0)
                     continue
 
             elif text in ("frac", "root"):
@@ -143,7 +143,7 @@ class TypstTex(Tex):
 
     # TransformMatchingTex uses this function
     def substr_to_path_count(self, substr: str) -> int:
-        return TYPST_TEX_SYMBOL_COUNT.get(substr, 1)
+        return TEX_TO_SYMBOL_COUNT.get(substr, 1)
 
     def select_unisolated_substring(self, pattern: str | re.Pattern) -> VGroup:
         counts = self.symbol_count
@@ -169,7 +169,7 @@ class TypstTex(Tex):
         return VGroup(*result)
 
 
-class TypstTexText(TypstTex):
+class TexText(TypstTex):
     tex_environment: str = ""
 
     def set_symbol_count(self):

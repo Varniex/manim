@@ -5,7 +5,7 @@ import numpy as np
 
 from manimlib.constants import DOWN, LEFT, RIGHT, UP
 from manimlib.constants import DEFAULT_MOBJECT_COLOR
-from manimlib.mobject.svg.typst_tex_mobject import TypstTex
+from manimlib.mobject.svg.tex_mobject import Tex
 from manimlib.mobject.svg.text_mobject import Text
 from manimlib.mobject.types.vectorized_mobject import VMobject
 from manimlib.utils.paths import straight_path
@@ -26,7 +26,7 @@ def char_to_cahced_mob(char: str, **text_config):
     if "$" in char:
         # This is for when the "character" is a LaTeX command
         # like $circle$ or $dots$
-        return TypstTex(char, **text_config)
+        return Tex(char, **text_config)
     else:
         return Text(char, **text_config)
 

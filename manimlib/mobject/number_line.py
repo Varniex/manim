@@ -8,7 +8,7 @@ from manimlib.constants import MED_SMALL_BUFF, SMALL_BUFF
 from manimlib.constants import YELLOW, DEG
 from manimlib.mobject.geometry import Line, ArrowTip
 from manimlib.mobject.numbers import DecimalNumber
-from manimlib.mobject.svg.typst_tex_mobject import TypstTex
+from manimlib.mobject.svg.tex_mobject import Tex
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.value_tracker import ValueTracker
 from manimlib.utils.bezier import interpolate
@@ -294,7 +294,7 @@ class Slider(VGroup):
         # Initialize label
         dec_string = f"{{:.{num_decimal_places}f}}".format(0)
         lhs = f"{var_name} = " if var_name is not None else ""
-        label = TypstTex(lhs + dec_string, font_size=font_size)
+        label = Tex(lhs + dec_string, font_size=font_size)
         label[var_name].set_fill(arrow_color)
         decimal = label.make_number_changeable(dec_string)
         decimal.add_updater(lambda m: m.set_value(get_value()))

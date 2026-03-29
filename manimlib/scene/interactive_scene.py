@@ -17,7 +17,7 @@ from manimlib.mobject.geometry import Square
 from manimlib.mobject.mobject import Group
 from manimlib.mobject.mobject import Mobject
 from manimlib.mobject.numbers import DecimalNumber
-from manimlib.mobject.svg.typst_tex_mobject import TypstTex
+from manimlib.mobject.svg.tex_mobject import Tex
 from manimlib.mobject.svg.text_mobject import Text
 from manimlib.mobject.types.dot_cloud import DotCloud
 from manimlib.mobject.types.vectorized_mobject import VGroup
@@ -387,7 +387,7 @@ class InteractiveScene(Scene):
         # Otherwise, treat as tex or text
         if set("\\^=+").intersection(clipboard_str):  # Proxy to text for LaTeX
             try:
-                new_mob = TypstTex(clipboard_str)
+                new_mob = Tex(clipboard_str)
             except LatexError:
                 return
         else:

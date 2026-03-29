@@ -11,8 +11,8 @@ from manimlib.constants import PI
 from manimlib.animation.composition import AnimationGroup
 from manimlib.animation.fading import FadeIn
 from manimlib.animation.growing import GrowFromCenter
-from manimlib.mobject.svg.typst_tex_mobject import TypstTex
-from manimlib.mobject.svg.typst_tex_mobject import TypstTexText
+from manimlib.mobject.svg.tex_mobject import Tex
+from manimlib.mobject.svg.tex_mobject import TexText
 from manimlib.mobject.geometry import Line
 from manimlib.mobject.svg.text_mobject import Text
 from manimlib.mobject.types.vectorized_mobject import VGroup
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from manimlib.typing import Vect3
 
 
-class Brace(TypstTex):
+class Brace(Tex):
     def __init__(
         self,
         mobject: Mobject,
@@ -91,9 +91,9 @@ class Brace(TypstTex):
         self.put_at_tip(text_mob, buff=buff)
         return text_mob
 
-    def get_tex(self, *tex: str, **kwargs) -> TypstTex:
+    def get_tex(self, *tex: str, **kwargs) -> Tex:
         buff = kwargs.pop("buff", SMALL_BUFF)
-        tex_mob = TypstTex(*tex, **kwargs)
+        tex_mob = Tex(*tex, **kwargs)
         self.put_at_tip(tex_mob, buff=buff)
         return tex_mob
 
@@ -109,7 +109,7 @@ class Brace(TypstTex):
 
 
 class BraceLabel(VMobject):
-    label_constructor: type = TypstTex
+    label_constructor: type = Tex
 
     def __init__(
         self,
@@ -174,7 +174,7 @@ class BraceLabel(VMobject):
 
 
 class BraceText(BraceLabel):
-    label_constructor: type = TypstTexText
+    label_constructor: type = TexText
 
 
 class LineBrace(Brace):
