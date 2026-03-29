@@ -16,6 +16,52 @@ from manimlib.logger import log
 from manimlib.utils.simple_functions import hash_string
 
 
+@lru_cache(maxsize=128)
+def get_typst_tex_preamble(template: str = "") -> str:
+    template = template or manim_config.tex.template
+    config = get_tex_template_config(template)
+    return config["preamble"]
+
+
+@cache_on_disk
+def typst_tex2svg(content: str) -> str:
+    with tempfile.TemporaryDirectory() as temp_dir:
+        tex_path = Path(temp_dir, "working").with_suffix(".typ")
+        svg_path = tex_path.with_suffix(".svg")
+        tex_path.write_text(content)
+
+        process = subprocess.run(
+            ["typst", "compile", "--format", "svg", tex_path, svg_path],
+            capture_output=True,
+            text=True,
+        )
+
+        # Handle error
+        if process.returncode != 0:
+            error_str = ""
+            log_path = tex_path.with_suffix(".log")
+            if log_path.exists():
+                content = log_path.read_text()
+                error_match = re.search(r"(?<=\n! ).*\n.*\n", content)
+                if error_match:
+                    error_str = error_match.group()
+            raise LatexError(error_str or "LaTeX compilation failed")
+
+        with open(svg_path) as file_svg:
+            result = file_svg.read()
+        return result
+
+
+def typst_latex2svg(
+    latex: str,
+    template: str = "",
+    additional_preamble: str = "",
+) -> str:
+    preamble = get_typst_tex_preamble(template)
+    full_tex = "\n".join([preamble, additional_preamble, latex])
+    return typst_tex2svg(full_tex)
+
+
 def get_tex_template_config(template_name: str) -> dict[str, str]:
     name = template_name.replace(" ", "_").lower()
     template_path = os.path.join(get_manim_dir(), "manimlib", "tex_templates.yml")
@@ -38,13 +84,18 @@ def get_tex_config(template: str = "") -> tuple[str, str]:
 
 
 def get_full_tex(content: str, preamble: str = ""):
-    return "\n\n".join((
-        "\\documentclass[preview]{standalone}",
-        preamble,
-        "\\begin{document}",
-        content,
-        "\\end{document}"
-    )) + "\n"
+    return (
+        "\n\n".join(
+            (
+                "\\documentclass[preview]{standalone}",
+                preamble,
+                "\\begin{document}",
+                content,
+                "\\end{document}",
+            )
+        )
+        + "\n"
+    )
 
 
 @lru_cache(maxsize=128)
@@ -95,7 +146,7 @@ def full_tex_to_svg(full_tex: str, compiler: str = "latex", message: str = ""):
 
     # Use the custom LaTeX cache directory from the config
     temp_dir = Path(manim_config.directories.latex_cache)
-    temp_dir.mkdir(exist_ok=True) # Create the directory if it does not already exist
+    temp_dir.mkdir(exist_ok=True)  # Create the directory if it does not already exist
 
     # Define paths for the intermediate TeX and DVI files
     tex_path = temp_dir / "working.tex"
@@ -108,14 +159,14 @@ def full_tex_to_svg(full_tex: str, compiler: str = "latex", message: str = ""):
     process = subprocess.run(
         [
             compiler,
-            *(['-no-pdf'] if compiler == "xelatex" else []),
+            *(["-no-pdf"] if compiler == "xelatex" else []),
             "-interaction=batchmode",
             "-halt-on-error",
             f"-output-directory={temp_dir}",
-            tex_path
+            tex_path,
         ],
         capture_output=True,
-        text=True
+        text=True,
     )
 
     if process.returncode != 0:
@@ -138,11 +189,11 @@ def full_tex_to_svg(full_tex: str, compiler: str = "latex", message: str = ""):
             "-v", "0",  # quiet
             "--stdout",  # output to stdout instead of file
         ],
-        capture_output=True
+        capture_output=True,
     )
 
     # Return SVG string
-    result = process.stdout.decode('utf-8')
+    result = process.stdout.decode("utf-8")
 
     if message:
         print(" " * len(message), end="\r")
