@@ -6,7 +6,7 @@ from manimlib.constants import FRAME_WIDTH
 from manimlib.constants import MED_LARGE_BUFF, SMALL_BUFF
 from manimlib.mobject.geometry import Line
 from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.mobject.svg.tex_mobject import TexText
+from manimlib.mobject.svg.typst_tex_mobject import TypstTexText
 
 
 from typing import TYPE_CHECKING
@@ -21,16 +21,17 @@ class BulletedList(VGroup):
         *items: str,
         buff: float = MED_LARGE_BUFF,
         aligned_edge: Vect3 = LEFT,
-        **kwargs
+        numbered: bool = False,
+        **kwargs,
     ):
-        labelled_content = [R"\item " + item for item in items]
-        tex_string = "\n".join([
-            R"\begin{itemize}",
-            *labelled_content,
-            R"\end{itemize}"
-        ])
-        tex_text = TexText(tex_string, isolate=labelled_content, **kwargs)
-        lines = (tex_text.select_part(part) for part in labelled_content)
+        if numbered:
+            labelled_content = [f"{num + 1}. " + item for num, item in enumerate(items)]
+        else:
+            labelled_content = ["- " + item for item in items]
+        tex_string = "\n".join([*labelled_content])
+        alignment = kwargs.get("alignment") or "left"
+        tex_text = TypstTexText(tex_string, alignment=alignment, **kwargs)
+        lines = (tex_text[part] for part in labelled_content)
 
         super().__init__(*lines)
 
@@ -44,19 +45,15 @@ class BulletedList(VGroup):
             part.scale(trg_dot_height / part[0].get_height(), about_edge=LEFT)
 
 
-class TexTextFromPresetString(TexText):
+class TexTextFromPresetString(TypstTexText):
     tex: str = ""
     default_color: ManimColor = DEFAULT_MOBJECT_COLOR
 
     def __init__(self, **kwargs):
-        super().__init__(
-            self.tex,
-            color=kwargs.pop("color", self.default_color),
-            **kwargs
-        )
+        super().__init__(self.tex, color=kwargs.pop("color", self.default_color), **kwargs)
 
 
-class Title(TexText):
+class Title(TypstTexText):
     def __init__(
         self,
         *text_parts: str,
@@ -67,7 +64,7 @@ class Title(TexText):
         match_underline_width_to_text: bool = False,
         underline_buff: float = SMALL_BUFF,
         underline_style: dict = dict(stroke_width=2, stroke_color=GREY_C),
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*text_parts, font_size=font_size, **kwargs)
         self.to_edge(UP, buff=MED_SMALL_BUFF)

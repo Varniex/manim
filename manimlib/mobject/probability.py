@@ -9,8 +9,8 @@ from manimlib.mobject.geometry import Line
 from manimlib.mobject.geometry import Rectangle
 from manimlib.mobject.mobject import Mobject
 from manimlib.mobject.svg.brace import Brace
-from manimlib.mobject.svg.tex_mobject import Tex
-from manimlib.mobject.svg.tex_mobject import TexText
+from manimlib.mobject.svg.typst_tex_mobject import TypstTex
+from manimlib.mobject.svg.typst_tex_mobject import TypstTexText
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.utils.color import color_gradient
 from manimlib.utils.iterables import listify
@@ -53,7 +53,7 @@ class SampleSpace(Rectangle):
         buff: float = MED_SMALL_BUFF
     ) -> None:
         # TODO, should this really exist in SampleSpaceScene
-        title_mob = TexText(title)
+        title_mob = TypstTexText(title)
         if title_mob.get_width() > self.get_width():
             title_mob.set_width(self.get_width())
         title_mob.next_to(self, UP, buff=buff)
@@ -133,7 +133,7 @@ class SampleSpace(Rectangle):
             if isinstance(label, Mobject):
                 label_mob = label
             else:
-                label_mob = Tex(label)
+                label_mob = TypstTex(label)
                 label_mob.scale(self.default_label_scale_val)
             label_mob.next_to(brace, direction, buff)
 
@@ -267,7 +267,7 @@ class BarChart(VGroup):
         if self.label_y_axis:
             labels = VGroup()
             for y_tick, value in zip(y_ticks, values):
-                label = Tex(str(np.round(value, 2)))
+                label = TypstTex(str(np.round(value, 2)))
                 label.set_height(self.y_axis_label_height)
                 label.next_to(y_tick, LEFT, SMALL_BUFF)
                 labels.add(label)
@@ -290,7 +290,7 @@ class BarChart(VGroup):
 
         bar_labels = VGroup()
         for bar, name in zip(bars, self.bar_names):
-            label = Tex(str(name))
+            label = TypstTex(str(name))
             label.scale(self.bar_label_scale_val)
             label.next_to(bar, DOWN, SMALL_BUFF)
             bar_labels.add(label)

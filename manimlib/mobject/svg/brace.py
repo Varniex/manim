@@ -11,8 +11,9 @@ from manimlib.constants import PI
 from manimlib.animation.composition import AnimationGroup
 from manimlib.animation.fading import FadeIn
 from manimlib.animation.growing import GrowFromCenter
-from manimlib.mobject.svg.tex_mobject import Tex
-from manimlib.mobject.svg.tex_mobject import TexText
+from manimlib.mobject.svg.typst_tex_mobject import TypstTex
+from manimlib.mobject.svg.typst_tex_mobject import TypstTexText
+from manimlib.mobject.geometry import Line
 from manimlib.mobject.svg.text_mobject import Text
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.types.vectorized_mobject import VMobject
@@ -29,13 +30,13 @@ if TYPE_CHECKING:
     from manimlib.typing import Vect3
 
 
-class Brace(Tex):
+class Brace(TypstTex):
     def __init__(
         self,
         mobject: Mobject,
         direction: Vect3 = DOWN,
         buff: float = 0.2,
-        tex_string: str = R"\underbrace{\qquad}",
+        tex_string: str = "underbrace(quad quad)",
         **kwargs
     ):
         super().__init__(tex_string, **kwargs)
@@ -90,9 +91,9 @@ class Brace(Tex):
         self.put_at_tip(text_mob, buff=buff)
         return text_mob
 
-    def get_tex(self, *tex: str, **kwargs) -> Tex:
+    def get_tex(self, *tex: str, **kwargs) -> TypstTex:
         buff = kwargs.pop("buff", SMALL_BUFF)
-        tex_mob = Tex(*tex, **kwargs)
+        tex_mob = TypstTex(*tex, **kwargs)
         self.put_at_tip(tex_mob, buff=buff)
         return tex_mob
 
@@ -108,7 +109,7 @@ class Brace(Tex):
 
 
 class BraceLabel(VMobject):
-    label_constructor: type = Tex
+    label_constructor: type = TypstTex
 
     def __init__(
         self,
@@ -173,7 +174,7 @@ class BraceLabel(VMobject):
 
 
 class BraceText(BraceLabel):
-    label_constructor: type = TexText
+    label_constructor: type = TypstTexText
 
 
 class LineBrace(Brace):

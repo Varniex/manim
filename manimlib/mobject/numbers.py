@@ -5,7 +5,7 @@ import numpy as np
 
 from manimlib.constants import DOWN, LEFT, RIGHT, UP
 from manimlib.constants import DEFAULT_MOBJECT_COLOR
-from manimlib.mobject.svg.tex_mobject import Tex
+from manimlib.mobject.svg.typst_tex_mobject import TypstTex
 from manimlib.mobject.svg.text_mobject import Text
 from manimlib.mobject.types.vectorized_mobject import VMobject
 from manimlib.utils.paths import straight_path
@@ -21,12 +21,12 @@ if TYPE_CHECKING:
     T = TypeVar("T", bound=VMobject)
 
 
-@lru_cache()
+@lru_cache
 def char_to_cahced_mob(char: str, **text_config):
-    if "\\" in char:
+    if "$" in char:
         # This is for when the "character" is a LaTeX command
-        # like ^\circ or \dots
-        return Tex(char, **text_config)
+        # like $circle$ or $dots$
+        return TypstTex(char, **text_config)
     else:
         return Text(char, **text_config)
 
@@ -86,7 +86,7 @@ class DecimalNumber(VMobject):
         # with the intent of calling .copy or .become on them
         submob_templates = list(map(self.char_to_mob, self.num_string))
         if self.show_ellipsis:
-            dots = self.char_to_mob("...")
+            dots = self.char_to_mob("$...$")
             dots.arrange(RIGHT, buff=2 * dots[0].get_width())
             submob_templates.append(dots)
         if self.unit is not None:

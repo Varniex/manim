@@ -5,7 +5,7 @@ import numpy as np
 from manimlib.constants import DOWN, LEFT, RIGHT, ORIGIN
 from manimlib.constants import DEG
 from manimlib.mobject.numbers import DecimalNumber
-from manimlib.mobject.svg.tex_mobject import Tex
+from manimlib.mobject.svg.typst_tex_mobject import TypstTex
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.types.vectorized_mobject import VMobject
 
@@ -114,14 +114,10 @@ class Matrix(VMobject):
         elif isinstance(element, float | complex):
             return DecimalNumber(element, **config)
         else:
-            return Tex(str(element), **config)
+            return TypstTex(str(element), **config)
 
     def create_brackets(self, rows, v_buff: float, h_buff: float) -> VGroup:
-        brackets = Tex("".join((
-            R"\left[\begin{array}{c}",
-            *len(rows) * [R"\quad \\"],
-            R"\end{array}\right]",
-        )))
+        brackets = TypstTex(f'vec(delim: "[", {", ".join(["quad"] * len(rows))})')
         brackets.set_height(rows.get_height() + v_buff)
         l_bracket = brackets[:len(brackets) // 2]
         r_bracket = brackets[len(brackets) // 2:]
@@ -186,13 +182,13 @@ class Matrix(VMobject):
         if use_vdots:
             for column in cols:
                 # Add vdots
-                dots = Tex(R"\vdots")
+                dots = TypstTex("dots.v")
                 dots.set_height(vdots_height)
                 self.swap_entry_for_dots(column[row_index], dots)
         if use_hdots:
             for row in rows:
                 # Add hdots
-                dots = Tex(R"\hdots")
+                dots = TypstTex("dots.h")
                 dots.set_width(hdots_width)
                 self.swap_entry_for_dots(row[col_index], dots)
         if use_vdots and use_hdots:

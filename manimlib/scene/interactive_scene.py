@@ -10,16 +10,14 @@ from manimlib.animation.fading import FadeIn
 from manimlib.config import manim_config
 from manimlib.constants import DL, DOWN, DR, LEFT, ORIGIN, RIGHT, UL, UP, UR
 from manimlib.constants import FRAME_WIDTH, FRAME_HEIGHT, SMALL_BUFF
-from manimlib.constants import PI
 from manimlib.constants import DEG
 from manimlib.constants import MANIM_COLORS, WHITE, GREY_A, GREY_C
-from manimlib.mobject.geometry import Line
 from manimlib.mobject.geometry import Rectangle
 from manimlib.mobject.geometry import Square
 from manimlib.mobject.mobject import Group
 from manimlib.mobject.mobject import Mobject
 from manimlib.mobject.numbers import DecimalNumber
-from manimlib.mobject.svg.tex_mobject import Tex
+from manimlib.mobject.svg.typst_tex_mobject import TypstTex
 from manimlib.mobject.svg.text_mobject import Text
 from manimlib.mobject.types.dot_cloud import DotCloud
 from manimlib.mobject.types.vectorized_mobject import VGroup
@@ -388,7 +386,7 @@ class InteractiveScene(Scene):
         # Otherwise, treat as tex or text
         if set("\\^=+").intersection(clipboard_str):  # Proxy to text for LaTeX
             try:
-                new_mob = Tex(clipboard_str)
+                new_mob = TypstTex(clipboard_str)
             except LatexError:
                 return
         else:
