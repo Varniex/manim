@@ -27,7 +27,7 @@ def get_tex_mob_scale_factor() -> float:
     # Render a reference "0" and calibrate so that font_size_for_unit_height
     # gives a height of 1 manim unit. Compensates for platform dvisvgm differences.
     font_size_for_unit_height = manim_config.tex.font_size_for_unit_height
-    svg_string = typst_latex2svg("0", show_message_during_execution=False)
+    svg_string = typst_latex2svg("0")
     svg_height = get_svg_content_height(svg_string)
     return 1.0 / (font_size_for_unit_height * svg_height)
 
@@ -257,7 +257,7 @@ class Tex(StringMobject):
                 config["num_decimal_places"] = ndp
             decimal_mob = DecimalNumber(float(value), **config)
             decimal_mob.replace(part)
-            decimal_mob.match_style(part)
+            decimal_mob.match_style(part).match_height(part)
             if len(part) > 1:
                 self.remove(*part[1:])
             self.replace_submobject(self.submobjects.index(part[0]), decimal_mob)
